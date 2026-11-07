@@ -27,9 +27,11 @@
  * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <cutils/properties.h>
 #ifndef __THERMAL_CLIENT_H__
 #define __THERMAL_CLIENT_H__
+
+/* This public C client ABI uses uint32_t but no Android property API. */
+#include <stdint.h>
 
 #ifdef __cplusplus
 extern "C" {

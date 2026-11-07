@@ -1,0 +1,31 @@
+name: AOSP17 Qualcomm thermal-client header source compatibility
+on:
+  push:
+    branches:
+      - port/a17-mondrian-thermal-client-header-20261107
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  c-cpp-source-contract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: C11/C++17 thermal-client ABI header smoke and boundary checks
+        run: python3 tests/check_thermal_client_aosp17.py
+      - name: Verify pinned PE-Reborn Android17 manifest and 135-project inventory
+        run: |
+          set -euo pipefail
+          git clone -q --depth 1 --branch port/a17-aosp17-manifest-20261102 \
+            https://github.com/PixelExperience-Reborn/manifest.git "$RUNNER_TEMP/pe-a17-manifest"
+          cd "$RUNNER_TEMP/pe-a17-manifest"
+          test "$(git rev-parse HEAD)" = "7205d12a83efd8d5b0938b10f4c15ae96f11eb1d"
+          python3 tools/validate_aosp17_base_profiles.py
+          python3 -m unittest discover -s tools -p test_aosp17_manifest_entrypoint.py -v
+          python3 tools/validate_135_repository_matrix.py
+      - name: Disclose hardware limits
+        run: |
+          echo "SOURCE/HEADER ONLY; this repo has no thermal-engine daemon or Thermal HAL."
+          echo "No Android17 Soong build, VINTF/FCM, vendor ABI, thermals or mondrian tests."
