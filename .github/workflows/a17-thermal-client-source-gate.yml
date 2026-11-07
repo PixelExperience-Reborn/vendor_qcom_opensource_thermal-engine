@@ -1,0 +1,21 @@
+name: AOSP17 Qualcomm thermal-client header source compatibility
+on:
+  push:
+    branches:
+      - port/a17-mondrian-thermal-client-header-20261107
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  c-cpp-source-contract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: C11/C++17 thermal-client ABI header smoke and boundary checks
+        run: python3 tests/check_thermal_client_aosp17.py
+      - name: Disclose hardware limits
+        run: |
+          echo "SOURCE/HEADER ONLY; this repo has no thermal-engine daemon or Thermal HAL."
+          echo "No Android17 Soong build, VINTF/FCM, vendor ABI, thermals or mondrian tests."
