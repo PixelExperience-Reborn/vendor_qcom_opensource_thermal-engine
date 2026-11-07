@@ -16,6 +16,7 @@ SOURCE = r"""
 #include "thermal_client.h"
 #include "thermal_client.h"
 #include <stddef.h>
+#include <string.h>
 #ifdef __cplusplus
 static_assert(MAX_ACTIONS == 32, "ABI constant changed");
 static_assert(sizeof(((struct action_info_data*)0)->num_actions) == sizeof(uint32_t),
@@ -26,8 +27,10 @@ _Static_assert(sizeof(((struct action_info_data*)0)->num_actions) == sizeof(uint
                "ABI count changed");
 #endif
 int main(void) {
-    struct config_instance c = {0};
-    struct action_info_data a = {0};
+    struct config_instance c;
+    struct action_info_data a;
+    memset(&c, 0, sizeof(c));
+    memset(&a, 0, sizeof(a));
     (void)c; (void)a;
     if (thermal_bandwidth_client_merge_input_info(0, 0) != 0) return 1;
     if (thermal_bandwidth_client_merge_input_info(0x7fff, 0x7fff) != 0x7fff7fff) return 2;
